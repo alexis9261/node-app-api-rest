@@ -1,47 +1,68 @@
 const { response, request } = require('express');
+const bcript = require('bcryptjs');
+const User = require('../models/user');
+
 
 // get
-const userGet = (req = request, res = response) => {
+const userGet = async(req = request, res = response) => {
+    
+    const { limit = 10, from = 0 } = req.query;
+    const condition = {status: true}
 
-    // Obtengo los query params, que vienen en la url de la peticion
-    // EJ: url_api/endpoint?param1=asdfasdf&param2=asdf
-    const query = req.query
-    // otra forma seria desestructurando los query params
-    // Esta forma es la recomendada porq solo obtenemos lo que deseamos,
-    // los demas valores posibles son ignorados
-    const { name, secretKey, page = 1, limit = 10 } = req.query
+    const [ total, users ] = await Promise.all([
+        User.countDocuments(condition),
+        User.find(condition)
+            .skip(Number(from))
+            .limit(Number(limit))
+    ]);
 
     // Respondo a la peticion con un codigo(status) 200ok, y un json
     res.status(200).json({
-       data: 'get api - controller',
-       name,
-       page,
-       limit,
-       secretKey
+        total,
+        users
     });
 }
 
 // post
-const userPost = (req, res = response ) => {
+const userPost = async( req, res = response ) => {    
 
-    const body = req.body;
+    const { name, email, password, rol } = req.body;
+    const user = new User( { name, email, password, rol } );
+
+    // encriptar la password
+    const salt = bcript.genSaltSync(10);
+    user.password = bcript.hashSync( password, salt );
+
+    // guardar en BD
+    await user.save();
 
     res.status(200).json({
        data: 'post api - controller',
-       body: body
+       user
     });
 }
 
 // put
-const userPut = (req, res = response ) => {
+const userPut = async(req, res = response ) => {
 
-    // obtengo el id enviado en la url, configurado en la ruta :userId
-    const id = req.params.userId;
+    // obtengo el id enviado en la url, configurado en la ruta :id
+    const { id } = req.params;
+    // obtengo los campos que vienen del body de la peticion
+    const { _id, password, google, email, ...resto } = req.body;
 
-    res.status(200).json({
-       data: 'put api - controller',
-       id: id
-    });
+    // TODO validar contra BD
+    if ( password ) {
+
+        // encriptar la password
+        const salt = bcript.genSaltSync(10);
+        resto.password = bcript.hashSync( password, salt );
+
+    }
+
+    // actualizo el usuario en BD
+    const user = await User.findByIdAndUpdate(id, resto);
+
+    res.status(200).json(user);
 }
 
 // patch
@@ -52,10 +73,18 @@ const userPatch = (req, res = response ) => {
 }
 
 // delete
-const userDelete = (req, res) => {
-    res.status(200).json({
-       data: 'delete api - controller' 
-    });
+const userDelete = async(req, res) => {
+
+    // obtengo el id enviado en la url, configurado en la ruta :id
+    const { id } = req.params;
+
+    // Eliminar el registro de BD
+    // const user = await User.findByIdAndDelete( id );
+
+    // actualizo el campo status del usuario del id en BD
+    const user = await User.findByIdAndUpdate(id, { status: false });
+
+    res.status(200).json(user);
 }
 
 
