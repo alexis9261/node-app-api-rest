@@ -36,7 +36,9 @@ const UserSchema = Schema({
 // El metodo toJSON es el que se encarga de obtener los datos de cada registro en la coleccion 'users'
 // Aca estamos sobreescribiendo el metodo, polimorfismo
 UserSchema.methods.toJSON = function() {
-    const { __v, password, ...user } = this.toObject();
+    const { __v, password, _id, ...user } = this.toObject();
+
+    user.uid = _id;
 
     return user;
 }

@@ -7,6 +7,7 @@ class Server {
         this.app  = express();
         this.port = process.env.PORT;
         this.usersPath = '/api/users';
+        this.authPath  = '/api/auth';
 
         // conectar a base de datos
         this.conectarDB();
@@ -41,6 +42,7 @@ class Server {
         // En este archivo tengo el router de nodeJs, donde estoy contruyendo todas las rutas concernientes al endpoint '/api/users'
         // Si quisiera otro conjunto de endpoints, tendria q crear otro archivo para otros endpoints, EJ: '/routes/products' para los endpoints de '/api/products'
         this.app.use( this.usersPath, require('../routes/users') );
+        this.app.use( this.authPath, require('../routes/auth') );
 
         // get
         // router.get('/api', (req, res) => {

@@ -78,13 +78,11 @@ const userDelete = async(req, res) => {
     // obtengo el id enviado en la url, configurado en la ruta :id
     const { id } = req.params;
 
-    // Eliminar el registro de BD
-    // const user = await User.findByIdAndDelete( id );
-
     // actualizo el campo status del usuario del id en BD
     const user = await User.findByIdAndUpdate(id, { status: false });
+    const authUser = req.user;
 
-    res.status(200).json(user);
+    res.status(200).json({user, authUser});
 }
 
 

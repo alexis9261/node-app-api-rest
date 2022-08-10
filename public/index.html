@@ -1,14 +1,80 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Home</title>
-</head>
-<body>
+    <style>
+        .card{
+            width: 25%;
+        }
+    </style>
+  </head>
+  <body>
+    <h2>Google Sign-in</h2>
 
-    <h2>Acceso denegado</h2>
-    
-</body>
+    <div class="card">
+        
+            <div
+              id="g_id_onload"
+              data-client_id="273370607612-nu22i9dsmsbso6gfrekq4eg5t1dndmpq.apps.googleusercontent.com"
+              data-callback="handleCredentialResponse"
+              data-auto_prompt="false"
+            ></div>
+            <div
+              class="g_id_signin"
+              data-type="standard"
+              data-size="large"
+              data-theme="outline"
+              data-text="sign_in_with"
+              data-shape="rectangular"
+              data-logo_alignment="left"
+            ></div>
+
+            <button id="sign_out_google">Sign out</button>
+
+    </div>
+
+    <script>
+        function handleCredentialResponse(response) {
+           
+            //  Google Token: ID_TOKEN
+            // console.log('id googlt token: ', response.credential)
+            const body = { id_token: response.credential }
+
+            fetch('http://localhost:3000/api/auth/google', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(body)
+            })
+                .then( resp => resp.json() )
+                .then( resp => {
+                    console.log(resp)
+                    localStorage.setItem( 'google_email', resp.user.email );
+                })
+                .catch(console.warn);
+      
+        }
+
+        const sign_out_google = document.getElementById('sign_out_google')
+        sign_out_google.onclick = () => {
+
+            console.log(google.accounts.id);
+            google.accounts.id.disableAutoSelect();
+
+            // sign out
+            google.accounts.id.revoke( localStorage.getItem('google_email'), done => {
+                // limpio el local storage
+                localStorage.clear();
+                // recargo el location
+                location.reload();
+            });
+
+        }
+      </script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+  </body>
 </html>
