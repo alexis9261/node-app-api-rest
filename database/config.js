@@ -7,7 +7,7 @@ const dbConection = async() => {
         // Me conecto a la BD
         await mongoose.connect( process.env.MONGODBATLAS);
 
-        console.log('Base de datos online');
+        console.log('[DB] Base de datos online');
         
     } catch (error) {
         console.log(error);

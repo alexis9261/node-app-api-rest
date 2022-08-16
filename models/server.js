@@ -1,6 +1,7 @@
 const express = require('express')
 const cors = require('cors');
 const { dbConection } = require('../database/config');
+const fileUpload = require('express-fileupload');
 
 class Server {
     constructor() {
@@ -13,6 +14,7 @@ class Server {
             users:      '/api/users',
             products:   '/api/products',
             search:     '/api/search',
+            uploads:    '/api/uploads',
         }
 
         // conectar a base de datos
@@ -40,6 +42,13 @@ class Server {
 
         // Directorio 'public'
         this.app.use( express.static('public') )
+
+        // middleware Fileupload - carga de archivos
+        this.app.use(fileUpload({
+            useTempFiles : true,
+            tempFileDir : '/tmp/',
+            createParentPath: true // creara las carpetas donde se guaden los archivos, si estas no existen
+        }));
     }
 
     routes() {
@@ -52,6 +61,7 @@ class Server {
         this.app.use( this.paths.users,      require('../routes/users') );
         this.app.use( this.paths.products,   require('../routes/products') );
         this.app.use( this.paths.search,     require('../routes/search') );
+        this.app.use( this.paths.uploads,    require('../routes/uploads') );
 
         // get
         // router.get('/api', (req, res) => {

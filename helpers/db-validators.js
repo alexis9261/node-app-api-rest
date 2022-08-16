@@ -3,10 +3,12 @@ const { Category, Role, User, Product } = require('../models');
 // valida si el rol se encuentra en BD
 const isValidateRole = async(rol = '') => {
     const existsRole = await Role.findOne({ rol });
-    console.log(existsRole)
+    
     if(!existsRole){
         throw new Error(`El rol ${ rol } no esta registrado en BD`);
     }
+
+    return true;
 }
 
 // verificar si el correo existe
@@ -20,6 +22,8 @@ const existsEmail = async ( email = '' ) => {
         // });
     }
 
+    return true;
+
 }
 
 // verificar si el correo existe
@@ -29,6 +33,8 @@ const existsIdUser = async ( id = '' ) => {
     if (!existsUserId) {
         throw new Error(`El id ${ id } no esta registrado en BD`);
     }
+
+    return true;
 
 }
 
@@ -40,6 +46,8 @@ const existsIdCategory = async ( id = '' ) => {
         throw new Error(`El id ${ id } no esta registrado en BD`);
     }
 
+    return true;
+
 }
 
 // verificar si la categoria existe
@@ -50,6 +58,25 @@ const existsIdProduct = async ( id = '' ) => {
         throw new Error(`El id ${ id } no esta registrado en BD`);
     }
 
+    return true;
+
+}
+
+/**
+ * Validar colecciones permitidas
+ */
+const allowedCollections = ( collection = '', collections = [] ) => {
+
+    const includeCollection = collections.includes(collection);
+
+    if (!includeCollection) {
+
+        throw new Error(`La coleccion ${collection} no es permitida: ${collections}`);
+        
+    }
+
+    return true;
+
 }
 
 module.exports = {
@@ -57,5 +84,6 @@ module.exports = {
     existsEmail,
     existsIdUser,
     existsIdCategory,
-    existsIdProduct
+    existsIdProduct,
+    allowedCollections
 }

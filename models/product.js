@@ -27,6 +27,7 @@ const ProductSchema = Schema({
     },
     description: { type: String },
     available: { type: Boolean, default: false },
+    img: { type: String },
 });
 
 // Metodo para quitar los campos '__v' y 'password' de la respuesta del modelo
