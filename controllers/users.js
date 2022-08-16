@@ -2,7 +2,6 @@ const { response, request } = require('express');
 const bcript = require('bcryptjs');
 const User = require('../models/user');
 
-
 // get
 const userGet = async(req = request, res = response) => {
     
@@ -84,7 +83,6 @@ const userDelete = async(req, res) => {
 
     res.status(200).json({user, authUser});
 }
-
 
 module.exports = {
     userGet,

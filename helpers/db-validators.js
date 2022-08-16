@@ -1,5 +1,4 @@
-const Role = require('../models/role');
-const User = require('../models/user');
+const { Category, Role, User, Product } = require('../models');
 
 // valida si el rol se encuentra en BD
 const isValidateRole = async(rol = '') => {
@@ -33,8 +32,30 @@ const existsIdUser = async ( id = '' ) => {
 
 }
 
+// verificar si la categoria existe
+const existsIdCategory = async ( id = '' ) => {
+
+    const existsCategoryId = await Category.findById(id);
+    if (!existsCategoryId) {
+        throw new Error(`El id ${ id } no esta registrado en BD`);
+    }
+
+}
+
+// verificar si la categoria existe
+const existsIdProduct = async ( id = '' ) => {
+
+    const existsProductId = await Product.findById(id);
+    if (!existsProductId) {
+        throw new Error(`El id ${ id } no esta registrado en BD`);
+    }
+
+}
+
 module.exports = {
     isValidateRole,
     existsEmail,
-    existsIdUser
+    existsIdUser,
+    existsIdCategory,
+    existsIdProduct
 }

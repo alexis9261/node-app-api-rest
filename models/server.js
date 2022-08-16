@@ -6,8 +6,14 @@ class Server {
     constructor() {
         this.app  = express();
         this.port = process.env.PORT;
-        this.usersPath = '/api/users';
-        this.authPath  = '/api/auth';
+
+        this.paths = {
+            auth:       '/api/auth',
+            categories: '/api/categories',
+            users:      '/api/users',
+            products:   '/api/products',
+            search:     '/api/search',
+        }
 
         // conectar a base de datos
         this.conectarDB();
@@ -41,8 +47,11 @@ class Server {
         // Al configurar esto, estoy usando todos los metodos que se encuentran en el archivo '/routes/users'
         // En este archivo tengo el router de nodeJs, donde estoy contruyendo todas las rutas concernientes al endpoint '/api/users'
         // Si quisiera otro conjunto de endpoints, tendria q crear otro archivo para otros endpoints, EJ: '/routes/products' para los endpoints de '/api/products'
-        this.app.use( this.usersPath, require('../routes/users') );
-        this.app.use( this.authPath, require('../routes/auth') );
+        this.app.use( this.paths.auth,       require('../routes/auth') );
+        this.app.use( this.paths.categories, require('../routes/categories') );
+        this.app.use( this.paths.users,      require('../routes/users') );
+        this.app.use( this.paths.products,   require('../routes/products') );
+        this.app.use( this.paths.search,     require('../routes/search') );
 
         // get
         // router.get('/api', (req, res) => {

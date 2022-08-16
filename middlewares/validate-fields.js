@@ -1,4 +1,5 @@
 const { validationResult } = require('express-validator');
+const { Category } = require('../models');
 
 const validateFields = ( req, res, next ) => {
     const errors = validationResult(req);
